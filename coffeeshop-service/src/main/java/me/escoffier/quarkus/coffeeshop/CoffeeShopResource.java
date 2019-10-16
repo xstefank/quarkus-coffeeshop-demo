@@ -1,7 +1,7 @@
 package me.escoffier.quarkus.coffeeshop;
 
+import io.smallrye.reactive.messaging.annotations.Channel;
 import io.smallrye.reactive.messaging.annotations.Emitter;
-import io.smallrye.reactive.messaging.annotations.Stream;
 import me.escoffier.quarkus.coffeeshop.http.BaristaService;
 import me.escoffier.quarkus.coffeeshop.model.Beverage;
 import me.escoffier.quarkus.coffeeshop.model.Order;
@@ -43,10 +43,10 @@ public class CoffeeShopResource {
         return barista.orderAsync(order.setOrderId(UUID.randomUUID().toString()));
     }
 
-    @Inject @Stream("orders")
+    @Inject @Channel("orders")
     Emitter<String> orders;
 
-    @Inject @Stream("queue")
+    @Inject @Channel("queue")
     Emitter<String> queue;
 
     @POST
