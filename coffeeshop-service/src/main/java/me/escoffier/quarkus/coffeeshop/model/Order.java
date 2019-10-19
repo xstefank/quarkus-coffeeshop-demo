@@ -32,4 +32,13 @@ public class Order {
         this.orderId = orderId;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+            "product='" + product + '\'' +
+            ", name='" + name + '\'' +
+            ", orderId='" + orderId + '\'' +
+            '}';
+    }
 }

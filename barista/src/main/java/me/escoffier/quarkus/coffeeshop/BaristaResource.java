@@ -1,36 +1,33 @@
 package me.escoffier.quarkus.coffeeshop;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-@ApplicationScoped
-public class KafkaBarista {
+@Path("/barista")
+@Produces(MediaType.APPLICATION_JSON)
+public class BaristaResource {
+
+    private Random random = new Random();
 
     @ConfigProperty(name = "barista.name")
     String name;
 
-    private Jsonb jsonb = JsonbBuilder.create();
-    private Random random = new Random();
-
-    @Incoming("orders")
-    @Outgoing("queue")
-    public CompletionStage<String> prepare(String message) {
-        Order order = jsonb.fromJson(message, Order.class);
+    @POST
+    public CompletionStage<Beverage> prepare(Order order) {
         System.out.println("Barista " + name + " is going to prepare a " + order.getProduct());
         return makeIt(order)
-                .thenApply(beverage -> PreparationState.ready(order, beverage));
+            .thenApply(beverage -> {
+                System.out.printf("Order %s for %s is ready%n%n", order.getProduct(), order.getName());
+                return beverage;
+            });
     }
-
-
-
 
     private CompletionStage<Beverage> makeIt(Order order) {
         return CompletableFuture.supplyAsync(() -> {
@@ -47,5 +44,6 @@ public class KafkaBarista {
             Thread.currentThread().interrupt();
         }
     }
+
 
 }
