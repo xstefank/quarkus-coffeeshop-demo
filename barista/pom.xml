@@ -11,7 +11,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>barista-http</artifactId>
+    <artifactId>barista</artifactId>
 
     <dependencies>
         <dependency>

@@ -1,7 +1,5 @@
 package me.escoffier.quarkus.coffeeshop;
 
-import io.smallrye.reactive.messaging.annotations.Channel;
-import io.smallrye.reactive.messaging.annotations.Emitter;
 import me.escoffier.quarkus.coffeeshop.http.BaristaService;
 import me.escoffier.quarkus.coffeeshop.model.Beverage;
 import me.escoffier.quarkus.coffeeshop.model.Order;
@@ -35,23 +33,6 @@ public class CoffeeShopResource {
     @Path("/async")
     public CompletionStage<Beverage> async(Order order) {
         return barista.orderAsync(order.setOrderId(getId()));
-    }
-
-    @Inject
-    @Channel("orders")
-    Emitter<Order> orders;
-
-    @Inject
-    @Channel("queue")
-    Emitter<Beverage> states;
-
-    @POST
-    @Path("/messaging")
-    public Order messaging(Order order) {
-        order.setOrderId(getId());
-        states.send(Beverage.queued(order));
-        orders.send(order);
-        return order;
     }
 
     private String getId() {
