@@ -29,7 +29,6 @@ public class BaristaResource {
     public CompletionStage<Beverage> process(Order order) {
         return CompletableFuture.supplyAsync(() -> {
             Beverage coffee = prepare(order);
-            LOGGER.info("Order {} for {} is ready", order.getProduct(), order.getName());
             return coffee;
         }, queue);
     }
@@ -41,10 +40,13 @@ public class BaristaResource {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return new Beverage(order, name);
+        
+        LOGGER.info("Order {} for {} is ready", order.getProduct(), order.getName());
+        return new Beverage(order, name, Beverage.State.READY);
     }
 
     private Random random = new Random();
+    
     int getPreparationTime() {
         return random.nextInt(5) * 1000;
     }

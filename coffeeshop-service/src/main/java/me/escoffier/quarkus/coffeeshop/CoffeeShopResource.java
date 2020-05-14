@@ -4,8 +4,6 @@ import io.smallrye.mutiny.Uni;
 import me.escoffier.quarkus.coffeeshop.http.BaristaService;
 import me.escoffier.quarkus.coffeeshop.model.Beverage;
 import me.escoffier.quarkus.coffeeshop.model.Order;
-import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.inject.Inject;
@@ -31,20 +29,15 @@ public class CoffeeShopResource {
         return barista.order(order.setOrderId(getId()));
     }
 
-    @Inject
-    @Channel("orders")
-    Emitter<Order> orders;
+    // orders channel
 
-    @Inject
-    @Channel("queue")
-    Emitter<Beverage> queue;
+    // queue channel
 
     @POST
     @Path("/messaging")
     public Order messaging(Order order) {
         order.setOrderId(getId());
-        queue.send(Beverage.queued(order));
-        orders.send(order);
+        
         return order;
     }
 
